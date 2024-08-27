@@ -4,7 +4,7 @@ CREATE DATABASE IF NOT EXISTS `didiseeit`;
 
 USE `didiseeit`;
 
-DROP TABLE IF EXISTS `WatchData`;
+DROP TABLE IF EXISTS `View`;
 DROP TABLE IF EXISTS `Collection`;
 DROP TABLE IF EXISTS `Media`;
 DROP TABLE IF EXISTS `User`;
@@ -12,14 +12,14 @@ DROP TABLE IF EXISTS `MediaType`;
 
 CREATE TABLE `MediaType` (
     `Id`INT NOT NULL AUTO_INCREMENT,
-    `Name` VARCHAR(128) NOT NULL,
+    `Type` VARCHAR(128) NOT NULL,
     PRIMARY KEY (`Id`)
 );
 
 CREATE TABLE `Media` (
     `Id` INT NOT NULL AUTO_INCREMENT,
     `MediaTypeId` INT NOT NULL,
-    `Name` VARCHAR(255) NOT NULL,
+    `Title` VARCHAR(255) NOT NULL,
     PRIMARY KEY (`Id`),
     FOREIGN KEY (`MediaTypeId`) REFERENCES `MediaType`(`Id`)
 );
@@ -39,7 +39,7 @@ CREATE TABLE `Collection` (
     FOREIGN KEY (`UserId`) REFERENCES `User`(`Id`)
 );
 
-CREATE TABLE `WatchData` (
+CREATE TABLE `View` (
     `Id` INT NOT NULL AUTO_INCREMENT,
     `CollectionId` INT NOT NULL,
     `MediaId` INT NOT NULL,
