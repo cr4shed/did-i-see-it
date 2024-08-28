@@ -20,6 +20,7 @@ CREATE TABLE `Media` (
     `Id` INT NOT NULL AUTO_INCREMENT,
     `MediaTypeId` INT NOT NULL,
     `Title` VARCHAR(255) NOT NULL,
+    `Year` INT NOT NULL,
     PRIMARY KEY (`Id`),
     FOREIGN KEY (`MediaTypeId`) REFERENCES `MediaType`(`Id`)
 );
@@ -47,7 +48,8 @@ CREATE TABLE `View` (
     `Updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`Id`),
     FOREIGN KEY (`CollectionId`) REFERENCES `Collection`(`Id`),
-    FOREIGN KEY (`MediaId`) REFERENCES `Media`(`Id`)
+    FOREIGN KEY (`MediaId`) REFERENCES `Media`(`Id`),
+    UNIQUE KEY (`CollectionId`, `MediaId`) -- Each collection can only contain any media once.
 );
 
 COMMIT;

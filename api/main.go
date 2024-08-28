@@ -4,23 +4,32 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"net/http"
 
 	"github.com/cr4shed/did-i-see-it/data"
+	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
 
 func main() {
+	// Load env variables.
 	envErr := handleLoadEnv("../.env")
     if envErr != nil {
         log.Fatal(envErr)
     }
 
+	// Connect to the database.
 	db, dbErr := data.DbConnect()
     if dbErr != nil {
         log.Fatal(dbErr)
     }
 
-	test(db)
+	// Setup API routing.
+	router := gin.Default()
+	router.Use(databaseMiddleware((db)))
+
+	router.GET("/collections/:userId", getUserCollections)
+	router.Run("localhost:8080")
 }
 
 func handleLoadEnv(envPath string) (error) {
@@ -33,33 +42,37 @@ func handleLoadEnv(envPath string) (error) {
     return nil
 }
 
-func test(db *sql.DB) {
-	_, err := data.AddCollection(db, 1, data.Collection{Name: "Test Collection From the DAL"})
+func databaseMiddleware(db *sql.DB) gin.HandlerFunc {
+	err := db.Ping()
+
+	// If database connection is in a bad state, abort.
 	if err != nil {
-		log.Fatal(err)
+		return func (c *gin.Context) {
+			c.JSON(http.StatusInternalServerError, nil)
+			c.Abort()
+		}
 	}
 
-	collection1, errc1 := data.GetUserCollections(db, 1)
-	if errc1 != nil {
-		log.Fatal(errc1)
+	// Continue processing.
+	return func (c *gin.Context) {
+		c.Set(DATABASE_CONNECTION, db)
+		c.Next()
 	}
+}
 
-	collection2, errc2 := data.GetUserCollections(db, 2)
-	if errc2 != nil {
-		log.Fatal(errc2)
-	}
+func getUserCollections(c *gin.Context) {
+	db, _ := c.Get(DATABASE_CONNECTION)
+	userId := c.Param("userId")
 
-	views1, err1 := data.GetViewsByCollection(db, 1)
-	if err1 != nil {
-		log.Fatal(err1)
-	}
-	views2, err2 := data.GetViewsByCollection(db, 2)
-	if err2 != nil {
-		log.Fatal(err2)
-	}
+	collection, err := data.GetUserCollections(db.(*sql.DB), userId)
 
-	fmt.Println(views1)
-	fmt.Println(views2)
-	fmt.Println(collection1)
-	fmt.Println(collection2)
+	handleResponse[[]data.Collection](c, collection, err)
+}
+
+func handleResponse[K, V Returnable](c *gin.Context, obj V, err error) {
+	if err != nil {
+		c.JSON(http.StatusBadRequest, nil)
+	} else {
+		c.JSON(http.StatusOK, obj)
+	}
 }

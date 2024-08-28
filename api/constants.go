@@ -1,0 +1,3 @@
+package main
+
+const DATABASE_CONNECTION string = "DATABASE_CONNECTION"

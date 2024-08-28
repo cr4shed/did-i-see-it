@@ -4,7 +4,7 @@ START TRANSACTION;
 
 INSERT INTO `MediaType` (`Type`) VALUES ('Movie'), ('TV Show');
 
-INSERT INTO `Media` (`MediaTypeId`, `Title`) VALUES (1, 'Zombieland'), (2, 'Lost');
+INSERT INTO `Media` (`MediaTypeId`, `Title`, `Year`) VALUES (1, 'Zombieland', 2009), (2, 'Lost', 2004), (1, 'Hackers', 1995);
 
 INSERT INTO `User` (`Id`) VALUES (1);
 

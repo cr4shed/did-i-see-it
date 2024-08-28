@@ -10,7 +10,7 @@ type Collection struct {
 	Name			string
 }
 
-func GetUserCollections(db *sql.DB, userId int) ([]Collection, error) {
+func GetUserCollections(db *sql.DB, userId string) ([]Collection, error) {
     rows, err := db.Query("SELECT Id, Name FROM Collection WHERE UserId = ?", userId)
     if err != nil {
         return nil, fmt.Errorf("ERROR - Could not query database. %v", err)
