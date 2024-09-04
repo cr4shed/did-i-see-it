@@ -1,15 +1,9 @@
 package data
 
 import (
-	"database/sql"
 	"fmt"
+	"database/sql"
 )
-
-type View struct {
-	Id		  		int
-	CollectionId	int
-	MediaId		 	int
-}
 
 func GetViewsByCollection(db *sql.DB, collectionId int) ([]View, error) {
     rows, err := db.Query("SELECT Id, CollectionId, MediaId FROM View WHERE CollectionId = ?", collectionId)

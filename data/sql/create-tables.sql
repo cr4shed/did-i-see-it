@@ -27,7 +27,12 @@ CREATE TABLE `Media` (
 
 CREATE TABLE `User` (
     `Id` INT NOT NULL AUTO_INCREMENT,
-    PRIMARY KEY (`Id`)
+    `Username` VARCHAR(255) NOT NULL,
+    `Email` VARCHAR(255) NOT NULL,
+    `PassHash` VARCHAR(255) NOT NULL,
+    PRIMARY KEY (`Id`),
+    UNIQUE (`Username`),
+    UNIQUE (`Email`)
 );
 
 CREATE TABLE `Collection` (
